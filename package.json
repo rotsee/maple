@@ -4,8 +4,10 @@
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
+    "start": "nuxt start",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "heroku-postbuild": "npm run build"
   },
   "devDependencies": {
     "nuxt": "3.0.0"
