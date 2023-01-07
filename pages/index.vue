@@ -182,7 +182,7 @@ export default {
     const mapWidth = MAP_WIDTH
     const mapHeight = MAP_HEIGHT
     const props = ["name", "capital", "currency", "flag", "sdate", "edate"]
-    const url = `http://api.thenmap.net/v2/world-2/svg/${mapDate}?svg_width=${mapWidth}&svg_height=${mapHeight}&svg_props=${props.join("|")}`
+    const url = `https://api.thenmap.net/v2/world-2/svg/${mapDate}?svg_width=${mapWidth}&svg_height=${mapHeight}&svg_props=${props.join("|")}`
 
     const parseSVG = function (source) {
       const parser = new DOMParser()
