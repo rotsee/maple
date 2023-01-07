@@ -4,7 +4,7 @@
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "start": "nuxt start",
+    "start": "npx nuxt start",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "heroku-postbuild": "npm run build"
