@@ -1,7 +1,4 @@
 <template>
-  <client-only>
-    <h1>{{mapDate}}</h1>
-  </client-only>
   <v-card>
     <div class="text-center">
       <v-progress-circular
@@ -11,6 +8,9 @@
         indeterminate
       />
     </div>
+    <v-card-title>
+      Today's map. Can you guess when it's from?
+    </v-card-title>
     <v-card-text>
     <client-only v-if="paths.length">
         <svg
@@ -37,7 +37,10 @@
       Källa, viktig info om kartan
     </v-card-text>
 
-    <v-card-actions class="d-flex justify-space-between">
+    <v-card-actions
+      v-if="attemptsLeft > 0"
+      class="d-flex justify-space-between"
+    >
       <v-form
         ref="dateForm"
         v-model="valid"
@@ -80,23 +83,36 @@
             Submit
           </v-btn>
         </v-row>
-        <!--
-        <v-text-field
-          label="From what date is this map?"
-          type="date"
-          placeholder="yyyy-mm-dd"
-          @keydown.enter="submit"
-          :min="minDate"
-          :max="maxDate"
-          :rules="dateRules"
-          v-model="userGuess"
-          pattern="\d{4}-\d{2}-\d{2}"
-          required
-        />
-        -->
       </v-form>
     </v-card-actions>
+    <v-alert type="warning" title="No more attempts" v-else>
+      <p>
+        Sorry, you ran out of attempts. Please try again tomorrow!
+      </p>
+      <p>
+        The borders, capitals and flags you see are valid from {{ validFrom }} to {{ validTo }}.
+      </p>
+    </v-alert>
   </v-card>
+  <v-dialog
+    v-model="showResult"
+    max-width="900"
+  >
+    <v-card>
+      <v-card-text v-if="userIsCorrect">
+        Congratulations, this map is indeed correct in {{ userGuess }}! 
+        The borders, capitals and flags you see are valid from {{ validFrom }} to {{ validTo }}.
+      </v-card-text>
+      <v-card-text v-else>
+        Sorry, this map is {{ userGuess > mapDate ? "earlier" : "later" }} than {{ userGuess }}.
+        You have {{ attemptsLeft }} attempts left to guess!
+      </v-card-text>
+
+      <v-card-actions>
+        <v-btn color="primary" block @click="showResult = false">Close</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <v-snackbar
     v-model="snackbar"
     timeout="-1"
@@ -123,20 +139,24 @@ const MIN_DATE = "1950-01-01"
 const MAX_DATE = "2020-12-31"
 const MAP_WIDTH = 1200
 const MAP_HEIGHT = 600
+const ATTEMPTS = 5
 
 export default {
   data: () => ({
     loading: true,
     snackbar: false,
+    showResult: false,
+    attemptsLeft: ATTEMPTS,
     pathRefs: [],
     countryInfo: {
       name: null,
       flag: null,
       capital: null,
     },
-    userGuessYear: null,
-    userGuessMonth: null,
-    userGuessDate: null,
+    userGuessYear: 1950,
+    userGuessMonth: 1,
+    userGuessDate: 1,
+    userIsCorrect: false,
     minDate: MIN_DATE,
     maxDate: MAX_DATE,
     mapWidth: MAP_WIDTH,
@@ -194,20 +214,33 @@ export default {
     return { paths, mapDate }
   },
   mounted: function () {
+    this.$refs.dateForm.validate()
     this.loading = false
+  },
+  computed: {
+    userGuess: function() {
+      return `${this.userGuessYear}-${String(this.userGuessMonth).padStart(2, "0")}-${String(this.userGuessDate).padStart(2, "0")}`
+    },
+    validFrom: function() {
+      const sdates = this.paths
+        .map(p => p.sdate)
+        .filter(p => p)
+      return sdates.reduce((max, d) => d > max ? d : max, "0")
+    },
+    validTo: function() {
+      const edates = this.paths
+        .map(p => p.edate)
+        .filter(p => p)
+      return edates.reduce((min, d) => d < min ? d : min, "9")
+    },
   },
   methods: {
     submit: async function() {
       if (this.valid) {
         // const { valid } = await this.$refs.dateForm.validate()
-        const sdates = this.paths.map(p => p.sdate)
-        const validFrom = sdates.reduce((max, d) => d > max ? d : max, "0")
-        const edates = this.paths.map(p => p.edate)
-        const validTo = edates.reduce((min, d) => d > min ? d : min, "9")
-        const userGuess = `${this.userGuessYear}-${this.userGuessMonth}-${this.userGuessDate}`
-        const correct = (userGuess >= validFrom && userGuess <= validTo)
-        console.log(validFrom, validTo, userGuess)
-        alert(`Du har submittat ${userGuess}. Det var ${ correct ? "RÄTT!!!": "fel... :((((((("}`)
+        this.userIsCorrect = (this.userGuess >= this.validFrom && this.userGuess <= this.validTo)
+        this.attemptsLeft--
+        this.showResult = true
       }
     },
     randomDate: function() {
