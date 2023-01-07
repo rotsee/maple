@@ -9,4 +9,7 @@ export default defineNuxtConfig({
       'process.env.DEBUG': false,
     },
   },
+  router: {
+    base: '/maple/',
+  },
 })
