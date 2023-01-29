@@ -6,7 +6,10 @@
       </v-container>
     </v-main>
     <v-bottom-navigation>
-      <v-btn variant="text">
+      <v-btn variant="text" href="/">
+        Home
+      </v-btn>
+      <v-btn variant="text" href="/about">
         About the map
       </v-btn>
       <v-btn variant="text">
