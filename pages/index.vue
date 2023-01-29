@@ -85,12 +85,26 @@
         </v-row>
       </v-form>
     </v-card-actions>
-    <v-alert type="warning" title="No more attempts" v-else>
+    <v-alert
+      type="warning"
+      title="No more attempts"
+      v-if="!attemptsLeft && !userIsCorrect"
+    >
       <p>
         Sorry, you ran out of attempts. Please try again tomorrow!
       </p>
       <p>
         The borders, capitals and flags you see are valid from {{ validFrom }} to {{ validTo }}.
+      </p>
+    </v-alert>
+    <v-alert
+      type="success"
+      title="Congratulations"
+      v-if="userIsCorrect"
+    >
+      <p>
+        Congratulations, you made it! 
+        Came back again tomorrow for a new challenge.
       </p>
     </v-alert>
   </v-card>
