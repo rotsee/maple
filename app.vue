@@ -7,7 +7,7 @@
     </v-main>
     <v-bottom-navigation>
       <v-btn variant="text">
-        Om oss
+        About the map
       </v-btn>
       <v-btn variant="text">
         Discord
