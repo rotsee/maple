@@ -1,5 +1,6 @@
 <template>
   <v-card>
+    <!--<h1>{{mapDate}}</h1>-->
     <div class="text-center">
       <v-progress-circular
         v-if="loading"
@@ -146,7 +147,8 @@
 </template>
 
 <script>
-import { DOMParser } from '@xmldom/xmldom'
+import { DOMParser } from "@xmldom/xmldom"
+import md5 from "md5"
 
 
 const MIN_DATE = "1950-01-01"
@@ -190,8 +192,10 @@ export default {
   setup: async function () {
     const from = new Date(MIN_DATE).valueOf() // typ -631238400000
     const to = new Date(MAX_DATE).valueOf() // typ 1577750400000
+    const today = new Date().toISOString().slice(0, 10)
+    const pseudoRand = parseInt(md5(today), 16)  / 2**127 % 1
     const diff = to - from
-    const rand = Math.floor(Math.random() * (diff + 1))
+    const rand = Math.floor(pseudoRand * (diff + 1))
     const mapDate = new Date(rand + from).toISOString()
     const mapWidth = MAP_WIDTH
     const mapHeight = MAP_HEIGHT
