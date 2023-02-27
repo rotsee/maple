@@ -10,13 +10,13 @@
     "heroku-postbuild": "npm run build"
   },
   "devDependencies": {
-    "@nuxt/content": "^2.4.2",
-    "nuxt": "^3.1.1"
+    "@nuxt/content": "^2.4.3",
+    "nuxt": "^3.2.2"
   },
   "dependencies": {
     "@xmldom/xmldom": "^0.8.6",
     "floating-vue": "^2.0.0-beta.20",
-    "sass": "^1.57.1",
-    "vuetify": "^3.1.2"
+    "sass": "^1.58.3",
+    "vuetify": "^3.1.6"
   }
 }
