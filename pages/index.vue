@@ -13,8 +13,10 @@
       Today's map. Can you guess when it's from?
     </v-card-title>
     <v-card-text>
-    <client-only v-if="paths.length">
         <svg
+          ref="map"
+          id="map"
+          class="mapSvg"
           preserveAspectRatio="xMidYMin meet"
           xmlns="http://www.w3.org/2000/svg"
           xmlns:thenmap="http://www.thenmap.net/2017/data"
@@ -23,18 +25,40 @@
           :height="mapHeight"
           :viewBox="`0 0 ${mapWidth} ${mapHeight}`"
         >
-          <path
+          <defs></defs>
+          <template
             v-for="path, idx in paths"
             :key="`path-${idx}`"
-            :d="path.d"
-            :data-name="path.name"
-            :data-capital="path.capital"
-            :data-flag="path.flag"
-            @mouseover="showTooltip"
-            @mouseout="snackbar = false"
-          />
+          >
+            <path
+              v-if="path.addCircle"
+              class="nation"
+              :d="path.d"
+            />
+            <circle
+              class="circle"
+              v-if="path.addCircle"
+              :cx="path.d.split(' ')[1].split(',')[0]"
+              :cy="path.d.split(' ')[1].split(',')[1]"
+              r="5"
+              :data-name="path.name"
+              :data-capital="path.capital"
+              :data-flag="path.flag"
+              @mouseover="showTooltip"
+              @mouseout="snackbar = false"
+            />
+            <path
+              v-else
+              class="nation"
+              :d="path.d"
+              :data-name="path.name"
+              :data-capital="path.capital"
+              :data-flag="path.flag"
+              @mouseover="showTooltip"
+              @mouseout="snackbar = false"
+            />
+          </template>
         </svg>
-      </client-only>
       Källa, viktig info om kartan
     </v-card-text>
 
@@ -145,7 +169,6 @@
 
   </v-snackbar>
 </template>
-
 <script>
 import { DOMParser } from "@xmldom/xmldom"
 import md5 from "md5"
@@ -214,6 +237,7 @@ export default {
           flag: p.getAttribute("thenmap:flag"),
           sdate: p.getAttribute("thenmap:sdate"),
           edate: p.getAttribute("thenmap:edate"),
+          addCircle: p.getAttribute("d").split(" ").length < 30,
         }))
       /*
         Array.from(doc.getElementsByTagName("path"))
@@ -223,6 +247,7 @@ export default {
     }
     const response = await fetch(url)
     const svg = await response.text()
+
     let paths = []
     try {
       paths = parseSVG(svg)
@@ -234,6 +259,9 @@ export default {
   mounted: function () {
     this.$refs.dateForm.validate()
     this.loading = false
+    const map = this.$refs.map
+    const svgPanZoomHandle = svgPanZoom(map, {controlIconsEnabled: true})
+    //const svgPanZoomHandle = svgPanZoom("#map")
   },
   computed: {
     userGuess: function() {
@@ -284,12 +312,29 @@ export default {
 }
 </script>
 <style>
-path {
+path.nation {
   fill: #efefef;
   stroke: #222222;
   stroke-width: 0.5px;
 }
-path:hover {
-  fill: aquamarine;
+path.nation:hover {
+  fill: #23e085;
+}
+circle.circle {
+  fill: #ffffff;
+  fill-opacity: 0.1;
+  stroke: #efefef;
+  stroke-width: 1.5;
+}
+circle.circle:hover {
+  stroke: #23e085;
+}
+#svg-pan-zoom-controls {
+  transform: translateX(88%) translateY(85%);
+}
+
+#svg-pan-zoom-controls > * > rect {
+  fill:#e08523;
+  stroke: none;
 }
 </style>
