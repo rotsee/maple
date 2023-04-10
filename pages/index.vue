@@ -324,7 +324,8 @@ circle.circle {
   fill: #ffffff;
   fill-opacity: 0.1;
   stroke: #efefef;
-  stroke-width: 1.5;
+  stroke-width: 1.2;
+  opacity: 0.5;
 }
 circle.circle:hover {
   stroke: #23e085;
