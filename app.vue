@@ -24,9 +24,3 @@
     </v-bottom-navigation>
   </v-app>
 </template>
-
-<script>
-
-</script>
-<style>
-</style>
