@@ -7,6 +7,13 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/content',
   ],
+  app: {
+    head: {
+      script: [
+        { src: '/svg-pan-zoom.min.js' },
+      ],
+    },
+  },
   vite: {
     define: {
       'process.env.DEBUG': false,
